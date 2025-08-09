@@ -8,7 +8,9 @@
     body {
         margin: 0;
         padding: 0;
-        background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+        background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+        background-size: 400% 400%;
+        animation: bgAnimation 12s ease infinite;
         font-family: 'Segoe UI', sans-serif;
         display: flex;
         justify-content: center;
@@ -19,17 +21,27 @@
         color: white;
     }
 
+    @keyframes bgAnimation {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
     #container {
         max-width: 90%;
-        padding: 20px;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+        animation: fadeIn 1s ease-in-out;
     }
 
     #text {
         font-size: 1.8em;
         line-height: 1.5;
-        animation: fadeIn 1s ease-in-out;
-        text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
         min-height: 4em;
+        text-shadow: 0 0 10px rgba(255,255,255,0.8);
     }
 
     @keyframes fadeIn {
@@ -37,18 +49,41 @@
         to { opacity: 1; transform: scale(1); }
     }
 
-    /* Animasi hati */
+    /* Hati beterbangan */
     .heart {
         position: fixed;
         bottom: -10px;
         font-size: 20px;
         animation: floatUp 5s linear infinite;
         opacity: 0.7;
+        pointer-events: none;
     }
 
     @keyframes floatUp {
         0% { transform: translateY(0) scale(1); opacity: 0.7; }
         100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+    }
+
+    /* Tombol musik */
+    #music-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(255,255,255,0.2);
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 1.5em;
+        cursor: pointer;
+        color: white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        transition: 0.3s;
+    }
+
+    #music-btn:hover {
+        background: rgba(255,255,255,0.4);
+        transform: scale(1.1);
     }
 </style>
 </head>
@@ -58,36 +93,33 @@
     <div id="text"></div>
 </div>
 
+<!-- Tombol Musik -->
+<button id="music-btn">⏸</button>
+
 <audio id="bg-music" src="keshi - LIMBO.mp3" autoplay loop></audio>
 
 <script>
     const sentences = [
-    "Hai, sayangku tercinta",
-    "Kau adalah udara di setiap hela nafasku",
-    "Aku sayang kamu…",
-    "Bukan sekadar kata",
-    "tapi janji",
-
-    "Aku berjanji",
-    "takkan pernah meninggalkanmu",
-    "seperti laut yang tak pernah menolak ombaknya",
-    "seperti langit yang selalu merangkul bintangnya.",
-
-    "Aku tak butuh peta",
-    "karena hatiku sudah menemukan rumahnya",
-    "di matamu",
-    "di senyummu",
-    "di dirimu.",
-
-    "Kamu adalah segalanya bagiku",
-    "cahaya, pelita, dan alasan aku bertahan.",
-
-    "Dan pada akhirnya",
-    "biarkan dunia tahu…",
-    "Aku mencintaimu.",
-    "I LOVE YOU ❤️"
-
-
+        "Hai, sayangku tercinta",
+        "Kau adalah udara di setiap hela nafasku",
+        "Aku sayang kamu…",
+        "Bukan sekadar kata",
+        "tapi janji",
+        "Aku berjanji",
+        "takkan pernah meninggalkanmu",
+        "seperti laut yang tak pernah menolak ombaknya",
+        "seperti langit yang selalu merangkul bintangnya.",
+        "Aku tak butuh peta",
+        "karena hatiku sudah menemukan rumahnya",
+        "di matamu",
+        "di senyummu",
+        "di dirimu.",
+        "Kamu adalah segalanya bagiku",
+        "cahaya, pelita, dan alasan aku bertahan.",
+        "Dan pada akhirnya",
+        "biarkan dunia tahu…",
+        "Aku mencintaimu.",
+        "I LOVE YOU ❤️"
     ];
 
     let index = 0;
@@ -98,14 +130,14 @@
         if (charIndex < sentences[index].length) {
             textElement.textContent += sentences[index].charAt(charIndex);
             charIndex++;
-            setTimeout(typeSentence, 50); // kecepatan mengetik
+            setTimeout(typeSentence, 50);
         } else {
             setTimeout(() => {
                 textElement.textContent = "";
                 charIndex = 0;
                 index = (index + 1) % sentences.length;
                 typeSentence();
-            }, 2000); // jeda sebelum ganti kalimat
+            }, 2000);
         }
     }
 
@@ -117,13 +149,25 @@
         heart.style.left = Math.random() * 100 + "vw";
         heart.style.fontSize = Math.random() * 20 + 15 + "px";
         document.body.appendChild(heart);
-
         setTimeout(() => { heart.remove(); }, 5000);
     }
 
     setInterval(createHeart, 300);
 
-    // Mulai efek mengetik
+    // Kontrol musik
+    const music = document.getElementById("bg-music");
+    const musicBtn = document.getElementById("music-btn");
+
+    musicBtn.addEventListener("click", () => {
+        if (music.paused) {
+            music.play();
+            musicBtn.textContent = "⏸";
+        } else {
+            music.pause();
+            musicBtn.textContent = "▶";
+        }
+    });
+
     typeSentence();
 </script>
 
