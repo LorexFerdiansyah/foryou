@@ -18,22 +18,42 @@
         color: white;
     }
 
+    /* Card Transparan */
     #container {
         max-width: 90%;
+        width: 90%;
+        height: auto;
+        min-height: 150px; /* biar ada ruang */
         padding: 25px;
         background: rgba(255, 255, 255, 0.15);
         border-radius: 20px;
         backdrop-filter: blur(10px);
         box-shadow: 0px 4px 30px rgba(0,0,0,0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center; /* center vertikal */
         text-align: center;
+        position: relative;
+        z-index: 9999;
     }
 
     #text {
-        font-size: 1.8em;
+        font-size: 1em;
         line-height: 1.6;
         animation: fadeIn 1s ease-in-out;
         text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-        min-height: 4em;
+        word-break: break-word;
+    }
+
+    /* Responsif di mobile */
+    @media (max-width: 600px) {
+        #text {
+            font-size: 1.4em;
+            line-height: 1.4;
+        }
+        #container {
+            padding: 15px;
+        }
     }
 
     @keyframes fadeIn {
@@ -41,18 +61,36 @@
         to { opacity: 1; transform: scale(1); }
     }
 
+    /* Animasi hati beterbangan */
     .heart {
         position: fixed;
         bottom: -10px;
         font-size: 20px;
         animation: floatUp 5s linear infinite;
-        opacity: 0.7;
+        opacity: 0.6;
         pointer-events: none;
+        z-index: 1;
     }
 
     @keyframes floatUp {
-        0% { transform: translateY(0) scale(1); opacity: 0.7; }
+        0% { transform: translateY(0) scale(1); opacity: 0.6; }
         100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+    }
+
+    /* Tombol mulai musik */
+    #start-btn {
+        position: fixed;
+        bottom: 20px;
+        background: rgba(255,255,255,0.2);
+        border: 2px solid white;
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-size: 1.1em;
+        color: white;
+        cursor: pointer;
+        backdrop-filter: blur(5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        z-index: 9999;
     }
 </style>
 </head>
@@ -62,25 +100,26 @@
     <div id="text"></div>
 </div>
 
-<!-- Musik autoplay -->
-<audio id="bg-music" src="keshi - LIMBO.mp3" autoplay loop muted></audio>
+<audio id="bg-music" src="keshi - LIMBO.mp3" loop></audio>
+<button id="start-btn">💖 Klik untuk mulai musik</button>
 
 <script>
     const sentences = [
-        "Hai sayang ❤️✨",
-        "Kau adalah udara di setiap hela nafasku 🌬️💕",
-        "Aku sayang kamu banget 🥰💖",
-        "Bukan sekadar kata 💌, tapi janji 🤞💞",
-        "Aku berjanji takkan pernah ninggalin kamu 🚀💫",
-        "Seperti laut 🌊 yang tak pernah menolak ombaknya 🌟",
-        "Seperti langit 🌌 yang selalu merangkul bintangnya 🌠",
-        "Aku nggak butuh peta 🗺️, karena hatiku sudah nemu rumahnya 🏡❤️",
-        "Di matamu 👀✨, di senyummu 😊💓, di dirimu 💕",
-        "Kamu segalanya buat aku 🌹💖",
-        "Cahaya 🌟, pelita 🕯️, dan alasan aku bertahan 🌈💪",
-        "Dan pada akhirnya ⏳ biarkan dunia tahu 🌍💌",
-        "Aku mencintaimu 💞😍",
-        "I LOVE YOU ❤️💋"
+        "❤️Hai sayang❤️",
+        "Kau adalah udara di setiap hela nafasku 🌬️",
+        "Aku sayang kamu banget 🥰",
+        "Bukan sekadar kata 💌, tapi janji 🤝",
+        "Aku berjanji takkan pernah ninggalin kamu 🏃💨",
+        "Seperti laut 🌊 yang tak pernah menolak ombaknya 🥰",
+        "Seperti langit ☁️ yang selalu merangkul bintangnya ⭐",
+        "Aku nggak butuh peta 🗺️, karena hatiku sudah nemu rumahnya 🏡",
+        "Di matamu 👀, di senyummu 😊, di dirimu 💕",
+        "Kamu segalanya buat aku 🤗",
+        "Cahaya 🌟, pelita 🕯️, dan alasan aku bertahan 💪",
+        "Dan pada akhirnya ⏳ biarkan dunia tahu 🌍",
+        "Aku mencintaimu 😍",
+        "I LOVE YOU 💋",
+        "🤍WULAN NURLIYA NOPITA🤍"
     ];
 
     let index = 0;
@@ -91,7 +130,7 @@
         if (charIndex < sentences[index].length) {
             textElement.textContent += sentences[index].charAt(charIndex);
             charIndex++;
-            setTimeout(typeSentence, 50);
+            setTimeout(typeSentence, window.innerWidth < 600 ? 40 : 50); // lebih cepat di HP
         } else {
             setTimeout(() => {
                 textElement.textContent = "";
@@ -102,6 +141,7 @@
         }
     }
 
+    // Efek hati beterbangan
     function createHeart() {
         const heart = document.createElement('div');
         heart.classList.add('heart');
@@ -114,15 +154,16 @@
     }
     setInterval(createHeart, 300);
 
-    // Autoplay dengan unmute setelah load
+    // Autoplay musik setelah user klik
     const music = document.getElementById("bg-music");
-    window.addEventListener("load", () => {
-        music.muted = false; // unmute setelah load
-        music.play().catch(err => {
-            console.log("Autoplay diblokir, perlu interaksi user:", err);
-        });
+    const startBtn = document.getElementById("start-btn");
+
+    startBtn.addEventListener("click", () => {
+        music.play();
+        startBtn.style.display = "none";
     });
 
+    // Mulai animasi teks
     typeSentence();
 </script>
 
